@@ -21,7 +21,7 @@ MENU = [
 ]
 
 
-mapping = {}
+mapping = {"Error": (None,"error.py")}
 with st.sidebar:
     st.title("My Dashboard")
     idx = 0 
@@ -39,14 +39,22 @@ with st.sidebar:
     st.markdown(f"<style>{STYLE}</style>", unsafe_allow_html=True)
 
     params = st.experimental_get_query_params()
-    view = params["view"][0]
+    st.experimental_set_query_params(**params)
 
-    if view in mapping:
-        focus_idx, focus_link = mapping[view]
-        focus_idx += 1
+    view = None
+    if "view" in params:
+        view = params["view"][0]
+        if view not in mapping:
+            view = "Error"
+    else:
+        view = "😂 About us"
+        st.experimental_set_query_params(view=view)
+
+    focus_idx, focus_link = mapping[view]
 
     # Highlight current view in menu
-    st.markdown(f'<style>section  [data-testid="stVerticalBlock"] [data-testid="stVerticalBlock"] > div:nth-child({focus_idx}) button {{background: rgba(151, 166, 195, 0.15);}}</style><hr/>', unsafe_allow_html=True)
+    if focus_idx:
+        st.markdown(f'<style>section  [data-testid="stVerticalBlock"] [data-testid="stVerticalBlock"] > div:nth-child({focus_idx+1}) button {{background: rgba(151, 166, 195, 0.15);}}</style><hr/>', unsafe_allow_html=True)
 
 
 
